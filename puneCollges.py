@@ -1,21 +1,21 @@
 from bs4 import BeautifulSoup
 import requests,json,csv
 from pprint import pprint
-with open("management.html","r") as f:
+with open("pharmacycls.html","r") as f:
     html=f.read()
 soup=BeautifulSoup(html,"html.parser")
 
 mainDiv = soup.find("div",class_="row listing-block-cont js-scrolling-container")
+# print(mainDiv)
 
 allDiv = mainDiv.find_all('div',class_="top-block")
-
 
 links_of_colleges = []
 dic = {}
 s_no = 0
 
 
-# #for all colleges's links
+#for all colleges's links
 
 
 for i in allDiv :
@@ -28,10 +28,9 @@ for i in allDiv :
             break
         else:
             link+=arr[j]
-            link+='-'        
+            link+='-'
     if len(link)!=0 :
         dic[s_no] = (link+'pune')
-     
 
 college_no = 0
 all_colleges = {}
@@ -45,16 +44,13 @@ for url in dic :
 
     college_no +=1
     college_details = {}
-    print(college_no)
-    print(link)
 
     college_data = res.find('div', class_= "college_data")
     h1 = college_data.find('h1',class_= "college_name").text.strip()
 
     college_details['College_Name'] = h1
 
-
-#     #for college estd and college type
+    #for college estd and college type
 
     extra_info = college_data.find('div',class_='extra_info')
     span = extra_info.find_all('span')
@@ -64,7 +60,8 @@ for url in dic :
                 college_details['College_Estd'] = span[i].text.strip()
             elif i == 4 :
                 college_details['College_Type'] = span[i].text.strip()
-    
+
+
 
 
     try:
@@ -80,9 +77,9 @@ for url in dic :
     college_details['Rating'] = rating
     college_details['Reviews'] = review
 
-    
 
-#     #for location
+
+    #for location
 
     address_row = res.find('div', class_= "address row")
     loc_block = address_row.find('div', class_="loc_block")
@@ -95,16 +92,23 @@ for url in dic :
         address+=" "
     college_details['Location'] = address
 
-    
-#     #for contacts
+    #for contacts
 
     p = address_row.find('p', class_="lr_detail").text.strip()
     college_details['Contact_details'] = p
 
     all_colleges[college_no] = college_details
 
-    print(college_details)
 
-final_data = open('managementcolleges.json','w+')
+
+final_data = open('pharmacycolleges.json','w+')
 json.dump(all_colleges,final_data, indent=4)
+
+
+
+
+
+
+
+
 
